@@ -6,7 +6,6 @@ class MaximaSpider(scrapy.Spider):
     start_urls = ['https://www.e-maxima.ee/Products/sook-ja-jook.aspx']
 
     def parse(self, response):
-        # follow links to author pages
         for href in response.css('#submenu a::attr(href)'):
             yield response.follow(href, self.parse_products)
 

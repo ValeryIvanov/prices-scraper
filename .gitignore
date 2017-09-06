@@ -23,3 +23,9 @@ Thumbs.db
 
 #data
 maxima_items.json
+
+#log
+*.log
+
+#json
+*.json
