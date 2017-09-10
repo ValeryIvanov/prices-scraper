@@ -20,10 +20,10 @@ class DropIfEmptyFieldPipeline(object):
 
     def process_item(self, item, spider):
 
-        if not(all(item.values())):
-            raise DropItem()
-        else:
+        if item['price']:
             return item
+        else:
+            raise DropItem("Missing price in %s" % item)
 
 
 class JsonExportPipeline(object):
