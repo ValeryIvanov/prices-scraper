@@ -67,7 +67,8 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {
     'prices.pipelines.PricesPipeline': 300,
     'prices.pipelines.DropIfEmptyFieldPipeline': 400,
-    'prices.pipelines.JsonExportPipeline': 1000,
+    'prices.pipelines.JsonExportPipeline': 500,
+    'scrapy_mongodb.MongoDBPipeline': 600,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -95,3 +96,6 @@ FEED_EXPORT_ENCODING = 'utf-8'
 LOG_STDOUT = True
 LOG_FILE = './scrapy.log'
 
+MONGODB_URI = 'mongodb://192.168.99.100:32777'
+MONGODB_ADD_TIMESTAMP = True
+MONGODB_SEPARATE_COLLECTIONS = True
