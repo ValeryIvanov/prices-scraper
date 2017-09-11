@@ -12,7 +12,7 @@ class SelverSpider(scrapy.Spider):
     def parse_products(self, response):
         for quote in response.css('#products-grid li'):
             yield {
-                'img': quote.css('a img::attr("src")').extract_first(),
+                'img': quote.css('a > img::attr("src")').extract_first(),
                 'price': quote.css('.left .price::text').extract_first(),
                 'unitprice': quote.css('.left .unit-price::text').extract_first(),
                 'product': quote.css('h5.product-name a::text').extract_first(),
