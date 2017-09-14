@@ -19,7 +19,7 @@ class CoopSpider(scrapy.Spider):
             yield {
                 'img': item.get('images')[0].get('categoryimage'),
                 'price': price,
-                'unitprice': price * float(item.get('content_quantity')),
+                'unitprice': price / float(item.get('content_quantity')),
                 'product': item.get('name'),
             }
         if data['next']:

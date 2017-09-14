@@ -9,12 +9,24 @@ class SelverSpider(scrapy.Spider):
         for href in response.css('nav ul li a::attr(href)'):
             yield response.follow(href, self.parse_products)
 
+    def parse_price(self, selector):
+        try:
+            return float(selector.css('.left .price::text').re_first(r'[\d.,]+').replace(",", "."))
+        except:
+            return ''
+
+    def parse_unitprice(self, selector):
+        try:
+            return float(selector.css('.left .unit-price::text').re_first(r'[\d.,]+').replace(",", "."))
+        except:
+            return ''
+
     def parse_products(self, response):
         for quote in response.css('#products-grid li'):
             yield {
                 'img': quote.css('a > img::attr("src")').extract_first(),
-                'price': quote.css('.left .price::text').extract_first(),
-                'unitprice': quote.css('.left .unit-price::text').extract_first(),
+                'price': self.parse_price(quote),
+                'unitprice': self.parse_unitprice(quote),
                 'product': quote.css('h5.product-name a::text').extract_first(),
             }
         next_page = response.css('ol.pagination li a.next::attr("href")').extract_first()

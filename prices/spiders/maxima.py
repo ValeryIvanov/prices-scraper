@@ -9,9 +9,15 @@ class MaximaSpider(scrapy.Spider):
         for href in response.css('#submenu a::attr(href)'):
             yield response.follow(href, self.parse_products)
 
+    def parse_price(self, selector):
+        try:
+            return float(selector.css('tr td:nth-child(3) strong::text').re_first(r'[\d.,]+').replace(",", "."))
+        except:
+            return ''
+
     def parse_unitprice(self, selector):
         try:
-            return selector.css('tr td:nth-child(3) p::text')[1].extract()
+            return float(selector.css('tr td:nth-child(3) p::text')[1].re_first(r'[\d.,]+').replace(",", "."))
         except:
             return ''
 
@@ -19,7 +25,7 @@ class MaximaSpider(scrapy.Spider):
         for quote in response.css('tr'):
             yield {
                 'img': quote.css('tr td.img img::attr("src")').extract_first(),
-                'price': quote.css('tr td:nth-child(3) strong::text').extract_first(),
+                'price': self.parse_price(quote),
                 'unitprice': self.parse_unitprice(quote),
                 'product': quote.css('tr td:nth-child(2) h3 a:first-child::text').extract_first(),
             }
