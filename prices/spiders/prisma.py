@@ -27,4 +27,4 @@ class PrismaSpider(scrapy.Spider):
         if data.get('pagination', {})['next_url']:
             next_page = data.get('pagination', {})['next_url']
             self.logger.info('Next url will be %s', self.base_url % next_page)
-            yield scrapy.Request(self.base_url % next_page, callback=self.parse_products)
+            yield scrapy.Request(self.base_url % next_page, headers={'Accept': 'application/json','charset':'UTF-8'}, callback=self.parse_products)
