@@ -8,10 +8,16 @@ class PrismaSpider(scrapy.Spider):
     base_url = 'https://prismamarket.ee%s'
 
     def parse(self, response):
-        for href in response.css('.category-shelf-item .transparent a::attr(href)').extract():
-            next_page = response.urljoin(href)
-            self.logger.info('Found url to visit %s', next_page)
-            yield scrapy.Request(next_page, headers={'Accept': 'application/json','charset':'UTF-8'}, callback=self.parse_products)
+        has_more_links = response.css('.categories-shelf').extract_first()
+        links = response.css('.category-shelf-item .transparent a::attr(href)').extract()
+        if has_more_links is not None:
+            self.logger.info('Found more links to visit on page %s', response.url)
+            for href in links:
+                self.logger.info('Visiting page to see if it has more links or products %s', self.base_url % href)
+                yield scrapy.Request(self.base_url % href, callback=self.parse)
+        else:
+            self.logger.info('Found products on url %s', response.url)
+            yield scrapy.Request(response.url, headers={'Accept': 'application/json','charset':'UTF-8'}, callback=self.parse_products, dont_filter=True)
 
     def parse_products(self, response):
         self.logger.info('Parse function called on %s', response.url)

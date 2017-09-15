@@ -12,14 +12,22 @@ class CoopSpider(scrapy.Spider):
         except:
             return item.get('sell_price')
 
+    def parse_quantity(self, item):
+        quantity = float(item.get('content_quantity'))
+        if quantity == 0:
+            return 1
+        else:
+            return quantity
+
     def parse(self, response):
         data = json.loads(response.body)
         for item in data.get('results', []):
             price = float(self.parse_price(item))
+            quantity = self.parse_quantity(item)
             yield {
                 'img': item.get('images')[0].get('categoryimage'),
                 'price': price,
-                'unitprice': price / float(item.get('content_quantity')),
+                'unitprice': price / quantity,
                 'product': item.get('name'),
             }
         if data['next']:
