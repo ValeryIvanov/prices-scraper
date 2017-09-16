@@ -3,7 +3,10 @@ import scrapy
 class MaximaSpider(scrapy.Spider):
     name = 'maxima'
 
-    start_urls = ['https://www.e-maxima.ee/Products/sook-ja-jook.aspx']
+    start_urls = [
+        'https://www.e-maxima.ee/Products/sook-ja-jook.aspx',
+        'https://www.e-maxima.ee/Products/Majapidamistarbed.aspx'
+    ]
 
     def parse(self, response):
         for href in response.css('#submenu a::attr(href)'):
