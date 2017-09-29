@@ -25,9 +25,12 @@ class SelverSpider(scrapy.Spider):
         for quote in response.css('#products-grid li'):
             yield {
                 'img': quote.css('a > img::attr("src")').extract_first(),
+                'img_url': quote.css('a > img::attr("src")').extract_first(),
                 'price': self.parse_price(quote),
                 'unitprice': self.parse_unitprice(quote),
                 'product': quote.css('h5.product-name a::text').extract_first(),
+                'id': quote.css('::attr("data-product-id")').extract_first(),
+                'url': quote.css('a::attr("href")').extract_first(),
             }
         next_page = response.css('ol.pagination li a.next::attr("href")').extract_first()
         if next_page is not None:

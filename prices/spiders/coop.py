@@ -24,11 +24,16 @@ class CoopSpider(scrapy.Spider):
         for item in data.get('results', []):
             price = float(self.parse_price(item))
             quantity = self.parse_quantity(item)
+            img = item.get('images')[0].get('categoryimage')
+            skuid = item.get('skuid')[0]
             yield {
-                'img': item.get('images')[0].get('categoryimage'),
+                'img': img,
+                'img_url': 'https://ecoop.ee/%s' % img,
                 'price': price,
                 'unitprice': price / quantity,
                 'product': item.get('name'),
+                'id': item.get('gtin')[0],
+                'url': 'https://ecoop.ee/api/v1/products?skuid=%s' % skuid ,
             }
         if data['next']:
             next_page = data['next']

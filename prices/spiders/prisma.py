@@ -24,11 +24,16 @@ class PrismaSpider(scrapy.Spider):
         data = json.loads(response.body)
         for item in data.get('entries', []):
             self.logger.info('Found following item %s', item)
+            img = item.get('image_guid')
+            ean = item.get('ean')
             yield {
-                'img': item.get('image_guid'),
+                'img': img,
+                'img_url': 'https://s3-eu-west-1.amazonaws.com/balticsimages/images/180x220/%s.png' % img,
                 'price': item.get('price'),
                 'unitprice': item.get('comp_price'),
                 'product': item.get('name'),
+                'id': item.get('ean'),
+                'url': 'https://prismamarket.ee/entry/%s' % ean,
             }
         if data.get('pagination', {})['next_url']:
             next_page = data.get('pagination', {})['next_url']

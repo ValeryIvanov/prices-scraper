@@ -1,30 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
-
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
 from scrapy.contrib.exporter import JsonItemExporter
-from scrapy.exceptions import DropItem
-
-class PricesPipeline(object):
-
-    def process_item(self, item, spider):
-        return item
-
-
-class DropIfEmptyFieldPipeline(object):
-
-    def process_item(self, item, spider):
-
-        if item['price']:
-            return item
-        else:
-            raise DropItem("Missing price in %s" % item)
-
 
 class JsonExportPipeline(object):
 
