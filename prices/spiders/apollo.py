@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import scrapy
 import json
 
@@ -46,13 +47,21 @@ class ApolloSpider(scrapy.Spider):
             self.logger.info('Failed to parse price')
             return {}
 
+    def parse_pages(self, attributes):
+        try:
+            return int(attributes[u'Lehek\xfclgi:'])
+        except:
+            return 0
+
     def parse_product(self, response):
+        attributes = self.parse_attributes(response)
         yield {
             'id': response.css('.link-wishlist::attr("data-wishlist")').extract_first(),
             'product': response.css('.product-name h1::text').extract_first(),
             'img_url': response.css('.product-page-img img::attr("src")').extract_first(),
             'url': response.url,
             'price': self.parse_price(response),
-            'attributes': self.parse_attributes(response),
+            'attributes': attributes,
+            'pages': self.parse_pages(attributes),
             'description': response.css('#description::text').extract_first()
         }
