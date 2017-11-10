@@ -1,4 +1,5 @@
 import scrapy
+import json
 
 class ApolloSpider(scrapy.Spider):
     name = 'apollo'
@@ -36,13 +37,22 @@ class ApolloSpider(scrapy.Spider):
         except:
             return ''
 
+    def parse_attributes(self, selector):
+        try:
+            attributes = list(map(lambda li: {li.css('*::text')[1].extract().strip(): li.css('*::text')[2].extract().strip()}, selector.css('#product-attribute-specs-table li')))
+            a = [{i:j for x in attributes for i,j in x.items()}]
+            return a[0]
+        except:
+            self.logger.info('Failed to parse price')
+            return {}
+
     def parse_product(self, response):
-        attributes = list(map(lambda li: [li.css('*::text')[1].extract().strip(), li.css('*::text')[2].extract().strip()], response.css('#product-attribute-specs-table li')))
         yield {
             'id': response.css('.link-wishlist::attr("data-wishlist")').extract_first(),
-            'name': response.css('.product-name::text').extract_first(),
+            'product': response.css('.product-name h1::text').extract_first(),
+            'img_url': response.css('.product-page-img img::attr("src")').extract_first(),
             'url': response.url,
             'price': self.parse_price(response),
-            'attributes': attributes,
+            'attributes': self.parse_attributes(response),
             'description': response.css('#description::text').extract_first()
         }
